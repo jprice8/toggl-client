@@ -51,25 +51,3 @@ class TogglClient:
         r = session.get(Endpoints.DETAILED_REPORT, headers=self.headers, params=payload)
         return r.json()
 
-
-if __name__ == '__main__':
-    togglClient = TogglClient()
-
-    # Set headers
-    togglClient.setAPIKey(os.getenv('APIKEY'))
-    togglClient.setUserAgent('TimeTrackerDashboard')
-
-    # Instantiate Session object . Session object allows us to 
-    # persist parameters across requests.
-    session = requests.Session()
-
-    session.auth = (os.getenv('APIKEY'), 'api_token')
-
-    # Make request
-    payload = {
-        'workspace_id': '5997219',
-        'since': '2022-01-29',
-        'until': '2022-01-29'
-    }
-
-    print(togglClient.getDetailedReport(session, payload))
