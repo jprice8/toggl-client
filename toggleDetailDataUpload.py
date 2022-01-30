@@ -28,7 +28,6 @@ class DetailData:
         togglClient = TogglClient()
 
         # Set headers
-        togglClient.setAPIKey(os.getenv('APIKEY'))
         togglClient.setUserAgent('TimeTrackerDashboard')
 
         session = requests.Session()
@@ -87,10 +86,24 @@ class Database:
         )
         return f'Successfully uploaded {len(df)} rows to the detail table!'
 
+    def check_for_preexisting_entries(self, df_to_load: pd.DataFrame) -> pd.DataFrame:
+        """
+        Compare the time entry ID's of the dataframe to load against past entries.
+        
+        If there are matching ID's, return True to prevent uploading.
+        """
+        past_entries_df = pd.read_sql_table('detail', self.ENGINE)
+        ids_to_upload = df_to_load['id']
+        matching_id_df = past_entries_df[past_entries_df['id'].isin(ids_to_upload)]
+        return len(matching_id_df) > 0
+
 
 if __name__ == '__main__':
     detailData = DetailData()
     df = detailData.fetch_data()
 
     database = Database()
-    print(database.save(df))
+    if database.check_for_preexisting_entries(df):
+        print('You are trying to upload a preexisting time entry.')
+    else:
+        print(database.save(df))

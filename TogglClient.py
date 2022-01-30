@@ -25,14 +25,6 @@ class TogglClient:
         self.user_agent = ""
 
     #### Set headers ####
-
-    def setAPIKey(self, APIKey: str) -> None:
-        """
-        Set user API key for request.
-        """
-        authHeader = APIKey + ":api_token"
-        self.headers['Authorization'] = authHeader
-
     def setUserAgent(self, agent: str) -> None:
         """
         Set user agent for request.
